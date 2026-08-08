@@ -30,7 +30,7 @@ function App() {
     dataString = dataString.split("* ")
     dataString = dataString.map((item)=>item.trim())
 
-    console.log(dataString);
+    // console.log(dataString);
     setResult(dataString)
     
 
@@ -43,11 +43,11 @@ function App() {
       <div className='col-span-4 p-10'>
         <div className='container h-100 overflow-auto'>
           <div className='text-white'>
-            {result}
+            {/* {result} */}
             <ul>
               {
                 result && result.map((item, index)=>(
-                  <li className='text-left p-2'><Answer ans={item} key={index} /></li>
+                  <li key={index} className='text-left p-2'><Answer ans={item} totalResult={result.length} index={index} /></li>
                 ))
               }
             </ul>
