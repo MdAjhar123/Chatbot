@@ -2,6 +2,7 @@
 import { useState } from 'react'
 import './App.css'
 import { URL } from './constant'
+import Answer from './components/Answer'
 
 function App() {
   
@@ -25,9 +26,12 @@ function App() {
       body: JSON.stringify(payload)
     })
     response = await response.json()
+    let dataString = response.candidates[0].content.parts[0].text
+    dataString = dataString.split("* ")
+    dataString = dataString.map((item)=>item.trim())
 
-    // console.log(response.candidates[0].content.parts[0].text);
-    setResult(response.candidates[0].content.parts[0].text)
+    console.log(dataString);
+    setResult(dataString)
     
 
   }
@@ -40,6 +44,14 @@ function App() {
         <div className='container h-100 overflow-auto'>
           <div className='text-white'>
             {result}
+            <ul>
+              {
+                result && result.map((item, index)=>(
+                  <li className='text-left p-2'><Answer ans={item} key={index} /></li>
+                ))
+              }
+            </ul>
+            
           </div>
           
         </div>
