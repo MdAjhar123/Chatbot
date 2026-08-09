@@ -7,7 +7,7 @@ import Answer from './components/Answer'
 function App() {
   
   const [question, setQuestion] =  useState("")
-  const [result, setResult] = useState(undefined)
+  const [result, setResult] = useState([])
 
   const payload = {
     "contents": [
@@ -31,10 +31,12 @@ function App() {
     dataString = dataString.map((item)=>item.trim())
 
     // console.log(dataString);
-    setResult(dataString)
+    setResult([...result, {type:'q', text:question},{type:'a', text:dataString}])
     
 
   }
+  console.log(result);
+  
 
   return (
     <div className='grid grid-cols-5 text-center'>
@@ -43,14 +45,26 @@ function App() {
       <div className='col-span-4 p-10'>
         <div className='container h-100 overflow-auto'>
           <div className='text-white'>
-            {/* {result} */}
+            
             <ul>
+              {
+                result.map((item,index)=>(
+                  item.type=='q'?
+                  <li key={index} className='text-left p-2'><Answer ans={item.text} totalResult={1} index={index} /></li>
+                  :item.text.map((ansItem, ansIndex)=>(
+                    <li key={ansIndex} className='text-left p-2'><Answer ans={ansItem} totalResult={result.length} index={ansIndex} /></li>
+                  ))
+                ))
+              }
+            </ul>
+
+            {/* <ul>
               {
                 result && result.map((item, index)=>(
                   <li key={index} className='text-left p-2'><Answer ans={item} totalResult={result.length} index={index} /></li>
                 ))
               }
-            </ul>
+            </ul> */}
             
           </div>
           
