@@ -49,22 +49,18 @@ function App() {
             <ul>
               {
                 result.map((item,index)=>(
-                  item.type=='q'?
-                  <li key={index} className='text-left p-2'><Answer ans={item.text} totalResult={1} index={index} /></li>
-                  :item.text.map((ansItem, ansIndex)=>(
-                    <li key={ansIndex} className='text-left p-2'><Answer ans={ansItem} totalResult={result.length} index={ansIndex} /></li>
-                  ))
+                  <div key={index+Math.random} className={item.type=='q'?"flex justify-end":''}>
+                    { 
+                      item.type=='q'?
+                      <li key={index} className='text-right p-1 border-8 border-zinc-700 bg-zinc-700 rounded-tl-3xl rounded-bl-3xl rounded-br-3xl w-fit text-just'><Answer ans={item.text} totalResult={1} index={index} type={item.type} /></li>
+                      :item.text.map((ansItem, ansIndex)=> (
+                        <li key={ansIndex} className='text-left p-1'><Answer ans={ansItem} totalResult={result.length} type={item.type} index={ansIndex} /></li>
+                      ))
+                    }
+                  </div>
                 ))
               }
             </ul>
-
-            {/* <ul>
-              {
-                result && result.map((item, index)=>(
-                  <li key={index} className='text-left p-2'><Answer ans={item} totalResult={result.length} index={index} /></li>
-                ))
-              }
-            </ul> */}
             
           </div>
           
