@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import "./App.css";
 import { URL } from "./constant";
 import Answer from "./components/Answer";
@@ -10,6 +10,8 @@ function App() {
     JSON.parse(localStorage.getItem("history")),
   );
   const [selectedHistory, setSelectedHistory] = useState("");
+  const [loader, setLoader] = useState(false);
+  const scrollToAns = useRef()
 
  
   const handleAskQuestion = async () => {
@@ -37,10 +39,12 @@ function App() {
         }]
     };
 
+    setLoader(true);
     let response = await fetch(URL, {
       method: "POST",
       body: JSON.stringify(payload),
     });
+
     response = await response.json();
     let dataString = response.candidates[0].content.parts[0].text;
     dataString = dataString.split("* ");
@@ -49,6 +53,11 @@ function App() {
     // console.log(dataString);
     setResult([...result,{ type: "q", text: question?question:selectedHistory },{ type: "a", text: dataString }]);
     setQuestion("");
+
+    setTimeout(() => {
+      scrollToAns.current.scrollTop = scrollToAns.current.scrollHeight
+    }, 500);
+    setLoader(false)
   };
   // console.log(recentHistory);
 
@@ -65,8 +74,6 @@ function App() {
   };
 
   useEffect(()=> {
-    // console.log(selectedHistory);
-    // handleAskQuestion()
     handleAskQuestion()
   }, [selectedHistory]);
 
@@ -101,8 +108,13 @@ function App() {
       </div>
 
       <div className="col-span-4 p-10">
-        <div className="container h-100 overflow-auto">
-          <div className="text-white">
+        <h1 className="text-4xl bg-clip-text text-transparent bg-gradient-to-r from-pink-700 to-violet-700">
+          Hello User, Ask me Anything
+        </h1>
+      
+        {loader?<span class="loader"></span>:null}
+        <div ref={scrollToAns} className="container h-100 overflow-auto">
+          <div className="text-zinc-300">
             <ul>
               {result.map((item, index) => (
                 <div
