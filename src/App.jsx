@@ -29,7 +29,7 @@ function App() {
         setRecentHistory(history);
       } else {
         localStorage.setItem("history", JSON.stringify([question]));
-        // setRecentHistory(question);  I HAVE TO CHECK WHICH ONE IS CORRECT
+        // setRecentHistory(question);  I HAVE TO CHECK WHICH ONE IS CORRECT 
         setRecentHistory([question]);
       }
     }
@@ -75,10 +75,29 @@ function App() {
     handleAskQuestion()
   }, [selectedHistory]);
 
+  // dark mode features
+  const [darkMode, setDarkMode] = useState("dark")
+
+  useEffect(()=>{
+    console.log(darkMode);
+    if(darkMode==='dark'){
+      document.documentElement.classList.add('dark')
+    }
+    else{
+      document.documentElement.classList.remove('dark')
+    }
+    
+  },[darkMode])
 
 
   return (
+    <div className={darkMode=='dark'?'dark':'light'}>
     <div className="grid grid-cols-5 h-screen text-center">
+
+      <select onChange={(event)=>setDarkMode(event.target.value)} className="fixed bottom-0 p-5 text-whit">
+        <option value="dark">Dark</option>
+        <option value="light">Light</option>
+      </select>
 
       {/* passing state props to recentSearch component */}
       <RecentSearch 
@@ -94,7 +113,7 @@ function App() {
         {loader?<span className="loader"></span>:null}
 
         <div ref={scrollToAns} className="container h-100 overflow-auto">
-          <div className="text-zinc-300">
+          <div className="dark:text-zinc-300 text-zinc-800">
 
             <ul>
               {result.map((item, index) => (
@@ -105,7 +124,7 @@ function App() {
           </div>
         </div>
 
-        <div className="bg-zinc-800 w-1/2 text-white p-1 pr-5 m-auto rounded-4xl border border-zinc-800 flex h-16">
+        <div className="dark:bg-zinc-800 w-1/2 bg-red-100 dark:text-white text-zinc-800 p-1 pr-5 m-auto rounded-4xl border border-zinc-800 flex h-16">
           <input
             type="text"
             value={question}
@@ -117,6 +136,7 @@ function App() {
           <button onClick={handleAskQuestion}>Ask</button>
         </div>
       </div>
+    </div>
     </div>
   );
 }
