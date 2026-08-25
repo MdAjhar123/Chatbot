@@ -24,7 +24,7 @@ function App() {
     if (question) {
       if (localStorage.getItem("history")) {
         let history = JSON.parse(localStorage.getItem("history"));
-        history = history.slice(0,19)   //18 questions display in Recent Search
+        history = history.slice(0,13)   //14 questions display in Recent Search
         history = [question, ...history];
         history = history.map((item)=>
         item.charAt(0).toUpperCase() + item.slice(1).trim());   //Each letter of Recent Search Start with capital letter
@@ -83,7 +83,7 @@ function App() {
   const [darkMode, setDarkMode] = useState("dark")
 
   useEffect(()=>{
-    console.log(darkMode);
+    // console.log(darkMode);
     if(darkMode==='dark'){
       document.documentElement.classList.add('dark')
     }
