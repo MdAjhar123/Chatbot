@@ -1,53 +1,48 @@
-import { useEffect, useState } from "react";
-import { checkHeading, replaceHeadingStarts } from "../helper";
 import SyntaxHighlighter from "react-syntax-highlighter";
 import { dark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import ReactMarkdown from 'react-markdown'
 
-const Answer = ({ ans, totalResult, index, type }) => {
-  const [heading, setHeading] = useState(false);
-  const [answer, setAnswer] = useState(ans);
+const Answer = ({ ans, type }) => {
 
-  useEffect(() => {
-    if (checkHeading(ans)) {
-      setHeading(true);
-      setAnswer(replaceHeadingStarts(ans));
-    }
-  }, []);
+   // Customize how ReactMarkdown renders different Markdown elements
+  const components = {
 
-  const renderer = {
-    code({node, inline, className, children,...props}){
-      const match = /language-(\w+)/.exec(className || '')
-      
-      return !inline && match?(
+    // Handle code blocks and apply syntax highlighting
+    code({ node, inline, className, children, ...props }) {
+      const match = /language-(\w+)/.exec(className || '')  // Get programming language from className, e.g. "language-js"
+      return !inline && match ? (
         <SyntaxHighlighter
-        {...props}
-        children={String(children).replace(/\n$/, '')}
-        language = {match[1]}
-        style = {dark}
-        pretag = "div"    
-      />
-      ):(
+          {...props}
+          children={String(children).replace(/\n$/, '')}
+          language={match[1]}
+          style={dark}
+          PreTag="div"
+        />
+      ) : (
         <code {...props} className={className}>
           {children}
         </code>
       )
-
-    }
+    },
+    // Customize Markdown headings
+    h1: ({node, ...props}) => <h1 className="text-xl font-bold pt-2 dark:text-white text-zinc-900" {...props} />,
+    h2: ({node, ...props}) => <h2 className="text-lg font-bold pt-2 dark:text-white text-zinc-900" {...props} />,
+    h3: ({node, ...props}) => <h3 className="text-lg font-semibold pt-2 dark:text-white text-zinc-900" {...props} />,
+    // Customize bold text
+    strong: ({node, ...props}) => <strong className="font-semibold dark:text-white text-zinc-900" {...props} />,
+    li: ({node, ...props}) => <li className="list-disc ml-5" {...props} />,
+    hr: ({node, ...props}) => <hr className="my-3 dark:border-zinc-700 border-zinc-300" {...props} />,
   }
 
   return (
-    <>
-      {index == 0 && totalResult > 1 ? (
-        <span className="pt-2 text-xl block text-white">{answer}</span>
-      ) : heading ? (
-        <span className={"pt-2 text-lg block text-white"}>{answer}</span>
-      ) : (
-        <span className={type == "q" ? "pl-1" : "pl-5"}>
-          <ReactMarkdown components={renderer}>{answer}</ReactMarkdown>
-        </span>
-      )}
-    </>
+    <span className={type == "q" ? "pl-1" : "pl-5"}>
+      <ReactMarkdown components={components}>{ans}</ReactMarkdown>  {/* Convert Markdown text into styled React elements */}
+    </span>
   );
 };
+
 export default Answer;
+
+
+
+

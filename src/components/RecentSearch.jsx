@@ -58,7 +58,7 @@ function RecentSearch({ recentHistory, setRecentHistory, setSelectedHistory }) {
                 {item}
               </li>
 
-              <button onClick={()=>clearSelectedHistory(index)} className="cursor-pointer bg-zinc-700 hover:bg-zinc-900">
+              <button onClick={()=>clearSelectedHistory(index)} className="cursor-pointer bg-zinc-700 hover:bg-zinc-900 rounded-sm">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   height="20px"

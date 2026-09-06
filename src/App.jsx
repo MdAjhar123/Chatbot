@@ -12,11 +12,9 @@ function App() {
   );
   const [selectedHistory, setSelectedHistory] = useState("");
   const [loader, setLoader] = useState(false);
-  const scrollToAns = useRef()
+  const scrollToAns = useRef();
 
- 
   const handleAskQuestion = async () => {
-    
     if (!question && !selectedHistory) {
       return false;
     }
@@ -24,25 +22,28 @@ function App() {
     if (question) {
       if (localStorage.getItem("history")) {
         let history = JSON.parse(localStorage.getItem("history"));
-        history = history.slice(0,13)   //14 questions display in Recent Search
+        history = history.slice(0, 13); //14 questions display in Recent Search
         history = [question, ...history];
-        history = history.map((item)=>
-        item.charAt(0).toUpperCase() + item.slice(1).trim());   //Each letter of Recent Search Start with capital letter
-        
+        history = history.map(
+          (item) => item.charAt(0).toUpperCase() + item.slice(1).trim(),
+        ); //Each letter of Recent Search Start with capital letter
+
         localStorage.setItem("history", JSON.stringify(history));
         setRecentHistory(history);
       } else {
         localStorage.setItem("history", JSON.stringify([question]));
-        // setRecentHistory(question);  I HAVE TO CHECK WHICH ONE IS CORRECT 
+        // setRecentHistory(question);  I HAVE TO CHECK WHICH ONE IS CORRECT
         setRecentHistory([question]);
       }
     }
 
-    const payloadData = question?question:selectedHistory
+    const payloadData = question ? question : selectedHistory;
     const payload = {
-      "contents": [{
-          "parts": [{ "text": payloadData }],
-        }]
+      contents: [
+        {
+          parts: [{ text: payloadData }],
+        },
+      ],
     };
 
     setLoader(true);
@@ -53,21 +54,32 @@ function App() {
 
     response = await response.json();
     let dataString = response.candidates[0].content.parts[0].text;
-    dataString = dataString.split("* ");
-    dataString = dataString.map((item) => item.trim());
+    // dataString = dataString.split("* ");
+    // dataString = dataString.map((item) => item.trim());
 
     // console.log(dataString);
-    setResult([...result,{ type: "q", text: question?question:selectedHistory },{ type: "a", text: dataString }]);
+    setResult([
+      ...result,
+      { type: "q", text: question ? question : selectedHistory },
+      { type: "a", text: [dataString] },
+    ]);
     setQuestion("");
 
+    // Scroll to the top of the latest question instead of scrollHeight,
+    // so long answers are read top-down instead of dropping at the end
     setTimeout(() => {
-      scrollToAns.current.scrollTop = scrollToAns.current.scrollHeight
+      const questions = scrollToAns.current.querySelectorAll(".justify-end");
+      const lastQuestion = questions[questions.length - 1];
+      if (lastQuestion) {
+        lastQuestion.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
     }, 500);
-    setLoader(false)
-    
+    // setTimeout(() => {
+    //   scrollToAns.current.scrollTop = scrollToAns.current.scrollHeight
+    // }, 500);
+    setLoader(false);
   };
   // console.log(recentHistory);
-
 
   const isEnter = (event) => {
     if (event.key == "Enter") {
@@ -75,72 +87,76 @@ function App() {
     }
   };
 
-  useEffect(()=> {
-    handleAskQuestion()
+  useEffect(() => {
+    handleAskQuestion();
   }, [selectedHistory]);
 
   // dark mode features
-  const [darkMode, setDarkMode] = useState("dark")
+  const [darkMode, setDarkMode] = useState("dark");
 
-  useEffect(()=>{
+  useEffect(() => {
     // console.log(darkMode);
-    if(darkMode==='dark'){
-      document.documentElement.classList.add('dark')
+    if (darkMode === "dark") {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
     }
-    else{
-      document.documentElement.classList.remove('dark')
-    }
-    
-  },[darkMode])
-
+  }, [darkMode]);
 
   return (
-    <div className={darkMode=='dark'?'dark':'light'}>
-    <div className="grid grid-cols-5 h-screen text-center">
+    <div className={darkMode == "dark" ? "dark" : "light"}>
+      <div className="grid grid-cols-5 h-screen text-center">
+        <select
+          onChange={(event) => setDarkMode(event.target.value)}
+          className="fixed bottom-0 p-5 text-whit"
+        >
+          <option value="dark">Dark</option>
+          <option value="light">Light</option>
+        </select>
 
-      <select onChange={(event)=>setDarkMode(event.target.value)} className="fixed bottom-0 p-5 text-whit">
-        <option value="dark">Dark</option>
-        <option value="light">Light</option>
-      </select>
+        {/* passing state props to recentSearch component */}
+        <RecentSearch
+          recentHistory={recentHistory}
+          setRecentHistory={setRecentHistory}
+          setSelectedHistory={setSelectedHistory}
+        />
 
-      {/* passing state props to recentSearch component */}
-      <RecentSearch 
-        recentHistory={recentHistory} 
-        setRecentHistory={setRecentHistory}
-        setSelectedHistory={setSelectedHistory}
-      />
+        {/* h-screen + flex-col + overflow-hidden splits this into fixed header/scroll/input sections */}
+        <div className="col-span-4 h-screen flex flex-col overflow-hidden">
+          <div className="px-10 pt-10 shrink-0">
+            <h1 className="text-4xl bg-clip-text text-transparent bg-gradient-to-r from-pink-700 to-violet-700">
+              Hello User, Ask me Anything
+            </h1>
+            {loader ? <span className="loader"></span> : null}
+          </div>
 
-      <div className="col-span-4 p-10">
-        <h1 className="text-4xl bg-clip-text text-transparent bg-gradient-to-r from-pink-700 to-violet-700">
-          Hello User, Ask me Anything
-        </h1>
-        {loader?<span className="loader"></span>:null}
+          {/* min-h-0 is required for overflow-y-auto to actually work inside a flex child */}
+          <div
+            ref={scrollToAns}
+            className="flex-1 min-h-0 overflow-y-auto chat-scroll"
+          >
+            <div className="dark:text-zinc-300 text-zinc-800 px-10">
+              <ul>
+                {result.map((item, index) => (
+                  <QuestionAnswer key={index} item={item} index={index} />
+                ))}
+              </ul>
+            </div>
+          </div>
 
-        <div ref={scrollToAns} className="container h-100 overflow-auto">
-          <div className="dark:text-zinc-300 text-zinc-800">
-
-            <ul>
-              {result.map((item, index) => (
-                <QuestionAnswer key={index} item={item} index={index}/>
-              ))}
-            </ul>
-
+          <div className="dark:bg-zinc-800 w-1/2 bg-red-100 dark:text-white text-zinc-800 p-1 pr-5 m-auto rounded-4xl border border-zinc-800 flex h-16 shrink-0 mb-8">
+            <input
+              type="text"
+              value={question}
+              onKeyDown={isEnter}
+              onChange={(e) => setQuestion(e.target.value)}
+              className="w-full h-full p-3 outline-none"
+              placeholder="Ask me anything"
+            />
+            <button onClick={handleAskQuestion}>Ask</button>
           </div>
         </div>
-
-        <div className="dark:bg-zinc-800 w-1/2 bg-red-100 dark:text-white text-zinc-800 p-1 pr-5 m-auto rounded-4xl border border-zinc-800 flex h-16">
-          <input
-            type="text"
-            value={question}
-            onKeyDown={isEnter}
-            onChange={(e) => setQuestion(e.target.value)}
-            className="w-full h-full p-3 outline-none"
-            placeholder="Ask me anything"
-          />
-          <button onClick={handleAskQuestion}>Ask</button>
-        </div>
       </div>
-    </div>
     </div>
   );
 }
