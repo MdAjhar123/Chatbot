@@ -30,11 +30,14 @@ function RecentSearch({ recentHistory, setRecentHistory, setSelectedHistory }) {
   //   console.log(history, selectedItem);
   // }
 
+
+
   return (
-    <div className="col-span-1 dark:bg-zinc-800 bg-red-100 pt-3">
-      <h1 className="dark:text-white text-zinc-800 text-xl flex text-center justify-center">
+    
+    <div className="h-full w-full dark:bg-zinc-800 bg-red-100 pt-3 overflow-y-auto">
+      <h1 className="dark:text-white text-zinc-800 text-xl flex text-center justify-center gap-2">
         <span>Recent Search</span>
-        <button onClick={clearHistory} className="cursor-pointer">
+        <button onClick={clearHistory} className="cursor-pointer rounded-sm bg-zinc-700 hover:bg-zinc-900">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             height="20px"
@@ -46,7 +49,7 @@ function RecentSearch({ recentHistory, setRecentHistory, setSelectedHistory }) {
           </svg>
         </button>
       </h1>
-      <ul className="text-left overflow-auto mt-2">
+      <ul className="text-left overflow-auto mt-3">
         {recentHistory &&
           recentHistory.map((item, index) => (
             <div key={index} className="flex justify-between pr-3 py-1">
