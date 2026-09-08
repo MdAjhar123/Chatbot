@@ -107,7 +107,7 @@ function App() {
 
   return (
     <div className={darkMode == "dark" ? "dark" : "light"}>
-      <div className="flex flex-col md:grid md:grid-cols-5 h-screen text-center relative overflow-hidden">
+      <div className="flex flex-col md:grid md:grid-cols-5 h-dvh text-center relative overflow-hidden">
 
         {/* DARK MODE TOGGLE BUTTON */}
         <button
@@ -163,7 +163,7 @@ function App() {
         </div>
 
         {/* h-screen + flex-col + overflow-hidden splits this into fixed header/scroll/input sections */}
-        <div className="w-full md:col-span-4 h-screen flex flex-col overflow-hidden">
+        <div className="w-full md:col-span-4 h-dvh flex flex-col overflow-hidden">
           <div className="px-4 sm:px-6 md:px-10 pt-16 md:pt-10 shrink-0 my-5">
             <h1 className="text-2xl sm:text-3xl md:text-4xl bg-clip-text text-transparent bg-gradient-to-r from-pink-700 to-violet-700">
               Hello User, Ask me Anything
