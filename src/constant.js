@@ -7,6 +7,8 @@ export const URL = `https://generativelanguage.googleapis.com/v1beta/models/gemi
 
 //BELOW ARE DIFFERENT GEMINI MODELS
 // gemini-flash-latest
+//gemini-2.5-flash-lite
 // gemini-3-flash-preview  *
 // gemini-3.5-flash-lite
 // gemini-3.1-pro-preview
+// gemini-3.6-flash

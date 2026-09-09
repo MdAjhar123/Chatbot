@@ -194,7 +194,7 @@ function App() {
               className="w-full h-full p-3 outline-none"
               placeholder="Ask me anything"
             />
-            <button onClick={handleAskQuestion}>Ask</button>
+            <button onClick={handleAskQuestion} className="cursor-pointer">Ask</button>
           </div>
         </div>
       </div>
